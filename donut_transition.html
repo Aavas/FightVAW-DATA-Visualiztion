@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+
+<script type="text/javascript">
+  function GetUrlValue(VarSearch){
+  var SearchString = window.location.search.substring(1);
+  console.log(SearchString);
+  var VariableArray = SearchString.split('&');
+  console.log(VariableArray);
+  for(var i = 0; i < VariableArray.length; i++){
+    var KeyValuePair = VariableArray[i].split('=');
+    if(KeyValuePair[0] == VarSearch){
+      console.log(KeyValuePair[1]);
+      return KeyValuePair[1];
+      }
+    }
+  }
+
+
+
+</script>
+
+
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+.total,.txt{
+    font: 30px sans-serif;
+    text-align: center;
+
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+</style>
+<form>
+  
+  <label><input type="radio" name="dataset" value="District_Cases" checked> District</label>
+  <label><input type="radio" name="dataset" value="TOV_Cases"> TOV</label>
+</form>
+<script src="d3.min.js"></script>
+<script>
+
+
+var donut_month = GetUrlValue("month")
+
+var width = 960,
+    height = 500,
+    radius = Math.min(width, height) / 2;
+
+var color = d3.scale.category20();
+
+var pie = d3.layout.pie()
+    .value(function(d) { console.log(d, "Data"); return d.District_Cases; });
+    //.name(function(d){return d.TOV})
+   // .sort(null);
+
+var arc = d3.svg.arc()
+    .innerRadius(radius - 100)
+    .outerRadius(radius - 20);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+/*var start_val = 0,
+    duration = 200,
+    end_val = [14];
+
+*/
+
+
+//svg.append("text").attr('x', -40).attr('y', -10).attr('class',"total" ).text("Total:");
+
+d3.json(donut_month + ".json", function(error, data) {
+  console.log(data);
+  var path = svg.datum(data).selectAll("path")
+    .data(pie)
+    .enter().append("path")
+    .attr("class", "label")
+      .attr("fill", function(d, i) { return color(i); })
+      .attr("d", arc)
+      .each(function(d) { this._current = d; }); // store the initial angles
+
+// var i=d3.interpo
+/*svg.selectAll(".txt")
+    .data(end_val)
+    .enter()
+    .append("text")
+    .text(start_val)
+    .attr("class", "txt")
+    .attr("x", -20)
+    .attr("y", 30)
+    .transition()
+    .duration(1000)
+        .tween("text", function(d) {
+            var i = d3.interpolate(0, d),
+                prec = (d + "").split("."),
+                round = (prec.length > 1) ? Math.pow(10, prec[1].length) : 1;
+
+            return function(t) {
+                this.textContent = Math.round(i(t) * round) / round;
+            };
+        });
+*/
+
+  d3.selectAll("input")
+      .on("change", change);
+
+
+
+  var timeout = setTimeout(function() {
+    d3.select("input[value=\"District_Cases\"]").property("checked", true).each(change);
+  }, 200);
+
+  function change() {
+    var value = this.value;
+    var name = this.name; /// Value of name not passing
+    console.log("this value"+this.value);
+    console.log("this name" + this.name);
+    clearTimeout(timeout);
+    pie.value(function(d) { /*console.log("hello" + d[name]);*/ return d[value]; }); // change the value function
+    path = path.data(pie); // compute the new angles
+    path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
+    path.select("title").text(function(d,i){ if (value=="TOV_Cases") { return d.data.TOV + "=" + d.value;}
+      else{ return d.data.District + "=" + d.value;}});
+    
+    d3.selectAll("path").attr("class",'label').
+    on("mouseenter", function(d,i) {
+                  text = path.append("text")
+                  .attr("transform", arc.centroid(d))
+                  .attr("dy", ".5em")
+                  .style("text-anchor", "middle")
+                  .style("font-size","20px")
+                  .style("fill", "darkgrey")
+                  .attr("class", "on")
+                  .text(d.data.District);})
+          .on("mouseout", function(d) {
+                   text.remove();})
+    .append("svg:title").text(function(d,i){console.log(d);return d.data.District + "=" + d.value;});
+  }
+});
+
+function type(d) {
+  d.TOV_Cases = +d.TOV_Cases;
+  d.District_Cases = +d.District_Cases;
+  return d;
+}
+
+// Store the displayed angles in _current.
+// Then, interpolate from _current to the new angles.
+// During the transition, _current is updated in-place by d3.interpolate.
+function arcTween(a) {
+  var i = d3.interpolate(this._current, a);
+  this._current = i(0);
+  return function(t) {
+    //console.log(t);
+    return arc(i(t));
+  };
+}
+
+</script>

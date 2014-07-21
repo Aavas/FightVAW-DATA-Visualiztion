@@ -1,27 +1,5 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<html>
-<head>
-
-<script type="text/javascript">
-  function GetUrlValue(VarSearch){
-  var SearchString = window.location.search.substring(1);
-  console.log(SearchString);
-  var VariableArray = SearchString.split('&');
-  console.log(VariableArray);
-  for(var i = 0; i < VariableArray.length; i++){
-    var KeyValuePair = VariableArray[i].split('=');
-    if(KeyValuePair[0] == VarSearch){
-      console.log(KeyValuePair[1]);
-      return KeyValuePair[1];
-      }
-    }
-  }
-
-
-
-</script>
-
 <style>
 
 body {
@@ -33,6 +11,16 @@ body {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
+}
+
+
+#filter{
+  font-size : 30px;
+  color: #23A8c4;
+  background-color: #EEEEEE;
+  display: block;
+  b
+
 }
 
 .bar {
@@ -48,16 +36,40 @@ body {
 }
 
 </style>
+
+
+<script>
+  
+function sendyear(){
+  
+}
+
+
+</script>
+
+
+
 <body>
 
+<!-- 
+<form>
+      
+
+  <select name="forma" onchange="location = this.options[this.selectedIndex].value;">
+     <option value="source_main.html">Source</option>
+     <option value="new-district.html">District</option>
+     
+  </select>
+</form>
+</br></br> -->
 
 <script src="d3.min.js"></script>
 <script>
 
-var graph_year = GetUrlValue("year");
 
-var margin = {top: 20, right: 130, bottom: 30, left: 40},
-    width = 1000 - margin.left - margin.right,
+
+var margin = {top: 20, right: 120, bottom: 30, left: 40},
+    width = 1100 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var x0 = d3.scale.ordinal()
@@ -68,16 +80,16 @@ var x1 = d3.scale.ordinal();
 var y = d3.scale.linear()
     .range([height, 0]);
 
-var color =d3.scale.category20();
+var color =d3.scale.category10();
 
 var xAxis = d3.svg.axis()
     .scale(x0)
-    .orient("bottom").ticks(10);
+    .orient("bottom");
 
 var yAxis = d3.svg.axis()
     .scale(y)
-    .orient("left");
-    /*.tickFormat(d3.format(".2"));*/
+    .orient("left")
+    .tickFormat(d3.format(".2s"));
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -86,41 +98,59 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json(graph_year+"test.json", function(error, data) {
-  var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "Month"; });
+d3.json("codepython_output.json", function(error, data) {
+  var year = d3.keys(data[0]).filter(function(key) { return key !== "Year"; });
 
   data.forEach(function(d) {
-    d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
+    d.cases = year.map(function(name) { return {name: name, value: +d[name]}; });
   });
 
-  x0.domain(data.map(function(d) { return d.Month; }));
-  x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
-  y.domain([0, d3.max(data, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
+  x0.domain(data.map(function(d) { return d.Year; } ));
+  x1.domain(year).rangeRoundBands([0, x0.rangeBand()]);
+  y.domain([0, d3.max(data, function(d) { return d3.max(d.cases, function(d) { return d.value; }); })]);
 
   svg.append("g")
+      //.attr("id","hello")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + (height+2) + ")")
-      .call(xAxis);
+      .attr("transform", "translate(0," + (height + 3) + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("y",25)
+      //.attr("dy", ".90em")
+      .attr("x",(width/2))
+      .style("text-anchor", "end")
+      .text("Year");
+
+ 
 
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-    .append("text")
+      .append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", -38)
+      .attr("y", -35)
       .attr("dy", ".90em")
       .attr("x",-(height/2.5))
       .style("text-anchor", "end")
       .text("Cases");
 
-  var Month = svg.selectAll(".Month")
+  var Year = svg.selectAll(".Year")
       .data(data)
     .enter().append("g")
       .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x0(d.Month) + ",0)"; });
+      .attr("transform", function(d) { console.log(d.Year ,"this is year") ;return "translate(" + x0(d.Year) + ",0)"; });
+      //s.attr("id","hello");
 
-  Month.selectAll("rect")
-      .data(function(d) { return d.ages; })
+  /*d3.selectAll("rect")
+    //.data(data)
+    .filter(function(d){ return typeof(d) == "string"; })
+    .style("cursor", "pointer")
+    .on("click", function(d){
+        document.location.href = "graph_month.html?year="+d;
+    });*/
+
+  Year.selectAll("rect")
+      .data(function(d) { return d.cases; })
     .enter().append("rect")
       .attr("width", x1.rangeBand())
       .attr("x", function(d) { return x1(d.name); })
@@ -128,30 +158,32 @@ d3.json(graph_year+"test.json", function(error, data) {
       .attr("height", function(d) { return height - y(d.value); })
       .style("fill", function(d) { return color(d.name); })
       .append("title")
-          .text(function(d) {return d.name + "= "+d.value;});
+          .text(function(d,i) {return d.name + " = "+d.value;});
 
-  d3.selectAll("text")
+
+    d3.selectAll("text")
     //.data(data)
     .filter(function(d){ return typeof(d) == "string"; })
     .style("cursor", "pointer")
     .on("click", function(d){
-        document.location.href = "donut_transition.html?month="+graph_year+d;
+        document.location.href = "graph_month.html?year="+d;
     });
 
+
   var legend = svg.selectAll(".legend")
-      .data(ageNames.slice().reverse())
+      .data(year.slice().reverse())
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   legend.append("rect")
-      .attr("x", width - 8)
+      .attr("x", width - 14)
       .attr("width", 18)
       .attr("height", 18)
       .style("fill", color);
 
   legend.append("text")
-      .attr("x", width + 12)
+      .attr("x", width + 8)
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "left")
@@ -159,7 +191,5 @@ d3.json(graph_year+"test.json", function(error, data) {
 
 });
 
-</script>
 
-</head>
-</html>
+</script>
