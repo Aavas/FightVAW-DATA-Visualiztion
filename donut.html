@@ -1,7 +1,8 @@
 <html>
-
+<meta charset="utf-8">
 <head>
-	<title>d3Vienno</title>
+	<title>Donut Visualization</title>
+	<link rel = "stylesheet" href = "style_page.css" type = "text/css">
 	<script type="text/javascript" src="d3.min.js"></script>
 	<script type="text/javascript">
 	  function GetUrlValue(VarSearch){
@@ -17,15 +18,76 @@
 	      }
 	    }
 	  }
-
-
-
 </script>
 
 </head>
 
 
 <body>
+
+<div id="header">
+    <div id="nav">
+        <ul>
+            <li>
+                <a href="http://fightvaw.org">HOME</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/about">ABOUT</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/organizations">ORGANIZTIONS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/news">NEWS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/katha">MERO KATHA</a>
+            </li>
+            <li>
+                <a href="source_main.html">VISUALIZATION</a>
+            </li>
+            <li>
+                <a href="http://blog.fightvaw.org">BLOG</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/contact">CONTACT</a>
+            </li>
+        </ul>
+    </div>
+    <div id = "logo_space">
+        <a href="http://fightvaw.org"><img src="logo.png"></a>
+    </div>
+    
+</div>
+<div id="wrapper">
+    <h1>Data Visualization</h1>
+    <p>Visualization of data of FightVAW.org</p>
+</div>
+
+
+<div id = "nav_visualization">
+    <ul>
+        <li><a href="source_main.html" id ="main_page">Source of News</a></li>
+        <li><a href="">District</a>
+            <ul>
+                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
+                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
+
+            </ul>
+        </li>
+        
+       
+    </ul>   
+</div>
+
+
+
+<!-- <div id="nav_visualization">
+<h1>Source</h1>
+</div> -->
+
+<div id="visualize">
+
 
 <script>
 	
@@ -38,11 +100,11 @@
 
 	d3.json(file + ".json", function(data){
 
-	var canvas = d3.select("body").append("svg").attr("width", "100%").attr("height","100%");
+	var canvas = d3.select("#visualize").append("svg").attr("width", "100%").attr("height","100%");
 		
 
 		var group = canvas.append("g") 
-			.attr("transform" , "translate(300,300)");
+			.attr("transform" , "translate(500,250)");
 
 		
 		var arc = d3.svg.arc()

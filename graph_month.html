@@ -2,25 +2,91 @@
 <meta charset="utf-8">
 <html>
 <head>
-
-<script type="text/javascript">
-  function GetUrlValue(VarSearch){
-  var SearchString = window.location.search.substring(1);
-  console.log(SearchString);
-  var VariableArray = SearchString.split('&');
-  console.log(VariableArray);
-  for(var i = 0; i < VariableArray.length; i++){
-    var KeyValuePair = VariableArray[i].split('=');
-    if(KeyValuePair[0] == VarSearch){
-      console.log(KeyValuePair[1]);
-      return KeyValuePair[1];
+  <title>Visualization</title>
+  <link rel = "stylesheet" href = "style_page.css" type = "text/css">
+  <script type="text/javascript">
+    function GetUrlValue(VarSearch){
+    var SearchString = window.location.search.substring(1);
+    console.log(SearchString);
+    var VariableArray = SearchString.split('&');
+    console.log(VariableArray);
+    for(var i = 0; i < VariableArray.length; i++){
+      var KeyValuePair = VariableArray[i].split('=');
+      if(KeyValuePair[0] == VarSearch){
+        console.log(KeyValuePair[1]);
+        return KeyValuePair[1];
+        }
       }
     }
-  }
+  </script>
+
+</head>
+
+<body>
+
+<div id="header">
+    <div id="nav">
+        <ul>
+            <li>
+                <a href="http://fightvaw.org">HOME</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/about">ABOUT</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/organizations">ORGANIZTIONS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/news">NEWS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/katha">MERO KATHA</a>
+            </li>
+            <li>
+                <a href="source_main.html">VISUALIZATION</a>
+            </li>
+            <li>
+                <a href="http://blog.fightvaw.org">BLOG</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/contact">CONTACT</a>
+            </li>
+        </ul>
+    </div>
+    <div id = "logo_space">
+        <a href="http://fightvaw.org"><img src="logo.png"></a>
+    </div>
+    
+</div>
+<div id="wrapper">
+    <h1>Data Visualization</h1>
+    <p>Visualization of data of FightVAW.org</p>
+</div>
+
+
+<div id = "nav_visualization">
+    <ul>
+        <li><a href="source_main.html" id ="main_page">Source of News</a></li>
+        <li><a href="">District</a>
+            <ul>
+                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
+                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
+
+            </ul>
+        </li>
+        
+       
+    </ul>   
+</div>
 
 
 
-</script>
+<!-- <div id="nav_visualization">
+<h1>Source</h1>
+</div> -->
+
+<div id="visualize">
+
 
 <style>
 
@@ -35,12 +101,21 @@ body {
   shape-rendering: crispEdges;
 }
 
+
+#filter{
+  font-size : 30px;
+  color: #23A8c4;
+  background-color: whitesmoke;
+  display: block;
+
+}
+
 .bar {
   fill: steelblue;
 }
 
 .color-svg-component {
-    background-color: #EEEEEE;
+    background-color: whitesmoke;
 }
 
 .tansit{
@@ -48,10 +123,22 @@ body {
 }
 
 </style>
-<body>
 
+
+<!-- 
+<form>
+      
+
+  <select name="forma" onchange="location = this.options[this.selectedIndex].value;">
+     <option value="source_main.html">Source</option>
+     <option value="new-district.html">District</option>
+     
+  </select>
+</form>
+</br></br> -->
 
 <script src="d3.min.js"></script>
+
 <script>
 
 var graph_year = GetUrlValue("year");
@@ -79,7 +166,7 @@ var yAxis = d3.svg.axis()
     .orient("left");
     /*.tickFormat(d3.format(".2"));*/
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#visualize").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .attr("class","color-svg-component")
@@ -161,5 +248,7 @@ d3.json(graph_year+"test.json", function(error, data) {
 
 </script>
 
-</head>
+</div>
+
+</body>
 </html>

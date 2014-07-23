@@ -1,34 +1,90 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-
-
-<script type="text/javascript">
-  function GetUrlValue(VarSearch){
-  var SearchString = window.location.search.substring(1);
-  console.log(SearchString);
-  var VariableArray = SearchString.split('&');
-  console.log(VariableArray);
-  for(var i = 0; i < VariableArray.length; i++){
-    var KeyValuePair = VariableArray[i].split('=');
-    if(KeyValuePair[0] == VarSearch){
-      console.log(KeyValuePair[1]);
-      return KeyValuePair[1];
+<head>
+  <title>TOV and District</title>
+  <link rel = "stylesheet" href = "style_page.css" type = "text/css">
+  <script type="text/javascript">
+    function GetUrlValue(VarSearch){
+    var SearchString = window.location.search.substring(1);
+    console.log(SearchString);
+    var VariableArray = SearchString.split('&');
+    console.log(VariableArray);
+    for(var i = 0; i < VariableArray.length; i++){
+      var KeyValuePair = VariableArray[i].split('=');
+      if(KeyValuePair[0] == VarSearch){
+        console.log(KeyValuePair[1]);
+        return KeyValuePair[1];
+        }
       }
     }
-  }
+
+  </script>
+</head>
+
+<body>
+
+<div id="header">
+    <div id="nav">
+        <ul>
+            <li>
+                <a href="http://fightvaw.org">HOME</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/about">ABOUT</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/organizations">ORGANIZTIONS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/news">NEWS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/katha">MERO KATHA</a>
+            </li>
+            <li>
+                <a href="source_main.html">VISUALIZATION</a>
+            </li>
+            <li>
+                <a href="http://blog.fightvaw.org">BLOG</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/contact">CONTACT</a>
+            </li>
+        </ul>
+    </div>
+    <div id = "logo_space">
+        <a href="http://fightvaw.org"><img src="logo.png"></a>
+    </div>
+    
+</div>
+<div id="wrapper">
+    <h1>Data Visualization</h1>
+    <p>Visualization of data of FightVAW.org</p>
+</div>
 
 
+<div id = "nav_visualization">
+    <ul>
+        <li><a href="source_main.html" id ="main_page">Source of News</a></li>
+        <li><a href="">District</a>
+            <ul>
+                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
+                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
 
-</script>
+            </ul>
+        </li>
+        
+       
+    </ul>   
+</div>
 
+<div id="visualize">
 
 <style>
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: auto;
-  position: relative;
-  width: 960px;
 }
 
 text {
@@ -40,26 +96,26 @@ text {
     text-align: center;
 
 }
-
-form {
-  position: absolute;
-  right: 10px;
-  top: 10px;
+form{
+  float: right;
 }
 
+
 </style>
+
+
 <form>
-  
   <label><input type="radio" name="dataset" value="District_Cases" checked> District</label>
   <label><input type="radio" name="dataset" value="TOV_Cases"> TOV</label>
 </form>
+
 <script src="d3.min.js"></script>
 <script>
 
 
 var donut_month = GetUrlValue("month")
 
-var width = 960,
+var width = 900,
     height = 500,
     radius = Math.min(width, height) / 2;
 
@@ -74,7 +130,7 @@ var arc = d3.svg.arc()
     .innerRadius(radius - 100)
     .outerRadius(radius - 20);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#visualize").append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g")

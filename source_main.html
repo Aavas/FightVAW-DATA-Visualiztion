@@ -1,5 +1,77 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<html>
+<head>
+  <title>Visualization</title>
+  <link rel = "stylesheet" href = "style_page.css" type = "text/css">
+</head>
+
+<body>
+
+<div id="header">
+    <div id="nav">
+        <ul>
+            <li>
+                <a href="http://fightvaw.org">HOME</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/about">ABOUT</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/organizations">ORGANIZTIONS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/news">NEWS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/katha">MERO KATHA</a>
+            </li>
+            <li>
+                <a href="source_main.html">VISUALIZATION</a>
+            </li>
+            <li>
+                <a href="http://blog.fightvaw.org">BLOG</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/contact">CONTACT</a>
+            </li>
+        </ul>
+    </div>
+    <div id = "logo_space">
+        <a href="http://fightvaw.org"><img src="logo.png"></a>
+    </div>
+    
+</div>
+<div id="wrapper">
+    <h1>Data Visualization</h1>
+    <p>Visualization of data of FightVAW.org</p>
+</div>
+
+
+<div id = "nav_visualization">
+    <ul>
+        <li><a href="source_main.html" id ="main_page">Source of News</a></li>
+        <li><a href="">District</a>
+            <ul>
+                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
+                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
+
+            </ul>
+        </li>
+        
+       
+    </ul>   
+</div>
+
+
+
+<!-- <div id="nav_visualization">
+<h1>Source</h1>
+</div> -->
+
+<div id="visualize">
+
+
 <style>
 
 body {
@@ -17,9 +89,8 @@ body {
 #filter{
   font-size : 30px;
   color: #23A8c4;
-  background-color: #EEEEEE;
+  background-color: whitesmoke;
   display: block;
-  b
 
 }
 
@@ -28,7 +99,7 @@ body {
 }
 
 .color-svg-component {
-    background-color: #EEEEEE;
+    background-color: whitesmoke;
 }
 
 .tansit{
@@ -37,39 +108,14 @@ body {
 
 </style>
 
-
-<script>
-  
-function sendyear(){
-  
-}
-
-
-</script>
-
-
-
-<body>
-
-<!-- 
-<form>
-      
-
-  <select name="forma" onchange="location = this.options[this.selectedIndex].value;">
-     <option value="source_main.html">Source</option>
-     <option value="new-district.html">District</option>
-     
-  </select>
-</form>
-</br></br> -->
-
 <script src="d3.min.js"></script>
+
 <script>
 
 
 
 var margin = {top: 20, right: 120, bottom: 30, left: 40},
-    width = 1100 - margin.left - margin.right,
+    width = 900 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var x0 = d3.scale.ordinal()
@@ -91,7 +137,7 @@ var yAxis = d3.svg.axis()
     .orient("left")
     .tickFormat(d3.format(".2s"));
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#visualize").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .attr("class","color-svg-component")
@@ -193,3 +239,8 @@ d3.json("codepython_output.json", function(error, data) {
 
 
 </script>
+
+</div>
+
+</body>
+</html>
