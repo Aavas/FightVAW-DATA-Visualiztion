@@ -18,6 +18,11 @@
 	      }
 	    }
 	  }
+
+	  function GetDistrictOnly(){
+	  	var district_name = window.location.search.substring(14);
+	  	return district_name
+	  }
 </script>
 
 </head>
@@ -96,6 +101,7 @@
 
 	var color = d3.scale.category20();
 	file = GetUrlValue("district");
+	district_name = GetDistrictOnly();
 
 
 	d3.json(file + ".json", function(data){
@@ -112,8 +118,10 @@
 					.outerRadius(r);
 
 		var pie = d3.layout.pie()
-					.value(function (d){console.log(d); return d.TOV_Cases;});
-					//.sort(null);
+					/*.startAngle(1.1*Math.PI)
+    				.endAngle(3.1*Math.PI)*/
+					.value(function (d){console.log(d); return d.TOV_Cases;})
+					.sort(null);
 
 		var arcs = group.selectAll(".arc")
 						.data(pie(data))
@@ -127,19 +135,47 @@
 			  .text(function(d) { return "TOV"; });
 */
 		arcs.append("path")
-			.attr("d", arc)
-			.attr("fill", function(d,i){return color(i);})
-			.on("mouseenter", function(d,i) {
+						.attr("fill", function(d,i){return color(i);})
+						.transition()
+						.delay(function(d,i){return i*60;})
+						.duration(200)
+						.attrTween('d', function(d) {
+						       var i = d3.interpolate(d.startAngle, d.endAngle);
+						       return function(t) {
+						           d.endAngle = i(t);
+						         return arc(d);
+						       }
+						  });
+					//	.attr("d", arc);
+			
+			
+			group.append("text")
+				  .style("text-anchor", "middle")
+                  .style("font-size","20px")
+                  .style("font-family","sans-serif")
+                  .style("fill", "steelblue")
+                  //.attr("class", "on")
+                  .text("Type of Violence");
+
+            group.append("text")
+            	  .attr("dy","2em")
+                  .style("text-anchor", "middle")
+                  .style("font-size","20px")
+                  .style("font-family","sans-serif")
+                  .style("fill", "steelblue")
+                  //.attr("class", "on")
+                  .text("on "+ district_name);
+
+			arcs.on("mouseenter", function(d,i) {
                   text = arcs.append("text")
                   .attr("transform", arc.centroid(d))
-                  .attr("dy", ".5em")
+                  .attr("y",200)
                   .style("text-anchor", "middle")
                   .style("font-size","20px")
                   .style("fill", "darkgrey")
                   .attr("class", "on")
                   .text(d.data.TOV+":"+d.data.TOV_Cases);
 		      })
-
 		      .on("mouseout", function(d) {
 		               text.remove();
 		      })

@@ -195,16 +195,25 @@ d3.json("codepython_output.json", function(error, data) {
         document.location.href = "graph_month.html?year="+d;
     });*/
 
-  Year.selectAll("rect")
-      .data(function(d) { return d.cases; })
-    .enter().append("rect")
-      .attr("width", x1.rangeBand())
-      .attr("x", function(d) { return x1(d.name); })
-      .attr("y", function(d) { return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return color(d.name); })
-      .append("title")
-          .text(function(d,i) {return d.name + " = "+d.value;});
+  var rectangle =Year.selectAll("rect")
+      .data(function(d) { return d.cases; });
+    
+      rectangle.enter().append("rect")
+        .style("fill", function(d) { return color(d.name); })
+        .attr("width", x1.rangeBand())
+        .attr("y",height)
+        .attr("height",0)
+        .style("fill", function(d) { return color(d.name); })
+        .transition()
+        .delay(function(d,i){return i *150;})
+        .duration(1000)
+        .attr("x", function(d) { return x1(d.name); })
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); });
+        
+
+      rectangle.append("title")
+            .text(function(d,i) {return d.name + " = "+d.value;});
 
 
     d3.selectAll("text")
@@ -223,16 +232,25 @@ d3.json("codepython_output.json", function(error, data) {
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   legend.append("rect")
+      .attr("x",width + 200)
+      .style("fill", color)
+      .transition()
+      .delay(function(d,i){return i *150;})
+      .duration(400)
       .attr("x", width - 14)
       .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
+      .attr("height", 18);
 
   legend.append("text")
+      .attr("x",width + 200)
+      .transition()
+      .delay(function(d,i){return i *150;})
+      .duration(400)
       .attr("x", width + 8)
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "left")
+      .attr("width", 18)
       .text(function(d) { return d; });
 
 });

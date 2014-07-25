@@ -206,14 +206,16 @@ d3.json(graph_year+"test.json", function(error, data) {
       .attr("class", "g")
       .attr("transform", function(d) { return "translate(" + x0(d.Month) + ",0)"; });
 
-  var rectangle= Month.selectAll("rect")
+  var rectangle = Month.selectAll("rect")
       .data(function(d) { return d.months; });
 
     rectangle.enter().append("rect")
       .attr("width", x1.rangeBand())
+      .attr("y",height)
+      .attr("height",0)
       .style("fill", function(d) { return color(d.name); })
       .transition()
-      .delay(function(d,i){return i *500;})
+      .delay(function(d,i){return i *100;})
       .duration(1000)
       .attr("x", function(d) { return x1(d.name); })
       .attr("y", function(d) { return y(d.value); })
@@ -237,22 +239,24 @@ d3.json(graph_year+"test.json", function(error, data) {
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   legend.append("rect")
-      .attr("x", width - 8)
+      .attr("x",width +200)
       .style("fill", color)
       .transition()
-      .delay(function(d,i){return i *100;})
-      .duration(1000)
+      .delay(function(d,i){return i *150;})
+      .duration(400)
+      .attr("x", width - 8)
       .attr("width", 18)
       .attr("height", 18);
 
   legend.append("text")
+      .attr("x",width +200)
+      .transition()
+      .delay(function(d,i){return i *150;})
+      .duration(400)
       .attr("x", width + 12)
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "left")
-      .transition()
-      .delay(function(d,i){return i *100;})
-      .duration(1000)
       .text(function(d) { return d; });
 
 });

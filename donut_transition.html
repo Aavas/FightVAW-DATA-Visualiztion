@@ -18,6 +18,15 @@
       }
     }
 
+    function GetYearValue(){
+    var SearchString = window.location.search.substring(7,11);
+    return SearchString;
+    }
+
+    function GetMonthValue(){
+    var SearchString = window.location.search.substring(11);
+    return SearchString;
+    }
   </script>
 </head>
 
@@ -113,7 +122,9 @@ form{
 <script>
 
 
-var donut_month = GetUrlValue("month")
+var donut_month = GetUrlValue("month");
+var year_text = GetYearValue();
+var month_text = GetMonthValue();
 
 var width = 900,
     height = 500,
@@ -122,9 +133,9 @@ var width = 900,
 var color = d3.scale.category20();
 
 var pie = d3.layout.pie()
-    .value(function(d) { console.log(d, "Data"); return d.District_Cases; });
+    .value(function(d) { console.log(d, "Data"); return d.District_Cases; })
     //.name(function(d){return d.TOV})
-   // .sort(null);
+   .sort(null);
 
 var arc = d3.svg.arc()
     .innerRadius(radius - 100)
@@ -135,6 +146,8 @@ var svg = d3.select("#visualize").append("svg")
     .attr("height", height)
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
 
 
 /*var start_val = 0,
@@ -151,11 +164,23 @@ d3.json(donut_month + ".json", function(error, data) {
   var path = svg.datum(data).selectAll("path")
     .data(pie)
     .enter().append("path")
+
+    .attr("fill", function(d, i) { return color(i); })
     .attr("class", "label")
-      .attr("fill", function(d, i) { return color(i); })
+      
       .attr("d", arc)
       .each(function(d) { this._current = d; }); // store the initial angles
 
+
+svg.append("text")
+          .style("text-anchor", "middle")
+         // .attr("y",-40)
+                  .attr("class" , "this")
+                  .style("font-size","20px")
+                  .style("font-family","sans-serif")
+                  .style("fill", "steelblue")
+                  //.attr("class", "on")
+                  .text("Cases in " + month_text + " of "+ year_text);
 // var i=d3.interpo
 /*svg.selectAll(".txt")
     .data(end_val)
@@ -196,8 +221,16 @@ d3.json(donut_month + ".json", function(error, data) {
     pie.value(function(d) { /*console.log("hello" + d[name]);*/ return d[value]; }); // change the value function
     path = path.data(pie); // compute the new angles
     path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
-    path.select("title").text(function(d,i){ if (value=="TOV_Cases") { return d.data.TOV + "=" + d.value;}
-      else{ return d.data.District + "=" + d.value;}});
+    path.select("title").text(function(d,i){ 
+      if (value=="TOV_Cases") {
+        //svg.select(".this").exit().remove();
+            d3.selectAll(".this").text("Voilence in " + month_text + " of "+ year_text);
+           return d.data.TOV + "=" + d.value;}
+      else{ 
+        //svg.select(".this").exit().remove();
+          d3.selectAll(".this").text("Cases in " + month_text + " of "+ year_text);
+
+          return d.data.District + "=" + d.value;}});
     
     d3.selectAll("path").attr("class",'label').
     on("mouseenter", function(d,i) {
@@ -209,8 +242,8 @@ d3.json(donut_month + ".json", function(error, data) {
                   .style("fill", "darkgrey")
                   .attr("class", "on")
                   .text(d.data.District);})
-          .on("mouseout", function(d) {
-                   text.remove();})
+                  /*.on("mouseout", function(d) {
+                           text.remove();})*/
     .append("svg:title").text(function(d,i){console.log(d);return d.data.District + "=" + d.value;});
   }
 });

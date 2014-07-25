@@ -214,35 +214,47 @@
 			    xScale.domain(data.map(function(d){return d.District;}));
 			    yScale.domain([0,d3.max(data, function(d){return d.Cases;})]);
 
-			canvas.selectAll("rect")
-				.data(data).enter()
-					.append("rect")
+			var rectangle = canvas.selectAll("rect")
+				.data(data).enter();
 
-					.attr("x",function(d,i) { console.log(d); return xScale(d.District);
-					})
-					.attr("y", function (d){return yScale(d.Cases); })
-					.attr("width", xScale.rangeBand())
-					.attr("height",function (d) {console.log(d.Cases+"height"); return h-yScale(d.Cases); })
-					//.style("fill",function(){return '#'+Math.floor(Math.random()*16777215).toString(16)})
-					.attr("fill", function(d, i) {return color(i);})
-					//.style("stroke","goldenrod")
-					//.on("click", function() {sortBars();sortText();})
-					.append("title")
-					.text(function(d) {return d.District + " = " + d.Cases;});
-					//.on("mouseover", function() { d3.select(this).style("fill", "red") });
-					//.on("mouseout",  function() { d3.select(this).style("fill", "steelblue") });
+				rectangle.append("rect")
+				.attr("fill", function(d, i) {return color(i);})
+				.attr("x",function(d,i) { console.log(d); return xScale(d.District);
+				})
+				.attr("y",h)
+				.attr("height",0)
+				.transition()
+		    	.delay(function(d,i){return i *100;})
+		      	.duration(600)
+				.attr("y", function (d){return yScale(d.Cases); })
+				.attr("width", xScale.rangeBand())					
+				.attr("height",function (d) {console.log(d.Cases+"height"); return h-yScale(d.Cases); });
+
+				//.style("fill",function(){return '#'+Math.floor(Math.random()*16777215).toString(16)})
+				
+				//.style("stroke","goldenrod")
+				//.on("click", function() {sortBars();sortText();})
+				rectangle.append("title")
+				.text(function(d) {return d.District + " = " + d.Cases;});
+				//.on("mouseover", function() { d3.select(this).style("fill", "red") });
+				//.on("mouseout",  function() { d3.select(this).style("fill", "steelblue") });
 
 			canvas.selectAll("rect")
 			    //.data(data)
 			    //.filter(function(d){ return typeof(d) == "string"; })
 			    .style("cursor", "pointer")
 			    .on("click", function(d){
-			        document.location.href = "donut.html?district="+file +d.District;
+			        document.location.href = "donut.html?district="+ file + d.District;
 			    });
 
 			canvas.selectAll(".text")
 				.data(data).enter()
 					.append("text")
+					.attr("y",h)
+					.attr("height",0)
+					.transition()
+			    	.delay(function(d,i){return i *100;})
+			      	.duration(600)
 					.attr("class","text")
 					.text(function(d) {	return d.Cases;  })
 					   .attr("text-anchor", "middle")
@@ -320,6 +332,8 @@
 			canvas.append("g")
 				.attr("class","x axis")
 				.attr("transform","translate(0,"+ h + ")")
+				.transition()
+		    	.duration(1000)
 				.call(xAxis)
 				.selectAll("text")
 				.attr("dy",".15em")
