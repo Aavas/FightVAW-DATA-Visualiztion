@@ -69,6 +69,12 @@
 <h1>Source</h1>
 </div> -->
 
+
+<div id="tooltip" class="hidden">
+        <p><strong>Cases Published by</strong></p>
+        <p><span id="value">10</span></p>
+</div>
+
 <div id="visualize">
 
 
@@ -106,6 +112,40 @@ body {
   background-color: red;
 }
 
+#tooltip {
+        position: absolute;
+        width: 200px;
+        height: auto;
+        padding: 3px;
+        background-color: whitesmoke;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        /*border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);*/
+        pointer-events: none;
+
+        visibility: visible;
+        opacity: .7;
+        transition: opacity 1s linear;
+        pointer-events: none;
+
+    }
+
+    #tooltip.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 2s, opacity 2s linear;
+    }
+
+    #tooltip p {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 20px;
+    }
+
 </style>
 
 <script src="d3.min.js"></script>
@@ -126,7 +166,7 @@ var x1 = d3.scale.ordinal();
 var y = d3.scale.linear()
     .range([height, 0]);
 
-var color =d3.scale.category10();
+var color =d3.scale.category20();
 
 var xAxis = d3.svg.axis()
     .scale(x0)
@@ -144,15 +184,23 @@ var svg = d3.select("#visualize").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var tooltip = d3.select("body")
+                .append("div")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("visibility", "hidden")
+                .text("a simple tooltip");
+
 d3.json("codepython_output.json", function(error, data) {
-  var year = d3.keys(data[0]).filter(function(key) { return key !== "Year"; });
+  var sources = d3.keys(data[0]).filter(function(key) { return key !== "Year";}); // list of all sources
+  
 
   data.forEach(function(d) {
-    d.cases = year.map(function(name) { return {name: name, value: +d[name]}; });
+    d.cases = sources.map(function(name) { return {name: name, value: +d[name]}; });
   });
 
   x0.domain(data.map(function(d) { return d.Year; } ));
-  x1.domain(year).rangeRoundBands([0, x0.rangeBand()]);
+  x1.domain(sources).rangeRoundBands([0, x0.rangeBand()]);
   y.domain([0, d3.max(data, function(d) { return d3.max(d.cases, function(d) { return d.value; }); })]);
 
   svg.append("g")
@@ -182,7 +230,7 @@ d3.json("codepython_output.json", function(error, data) {
 
   var Year = svg.selectAll(".Year")
       .data(data)
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "g")
       .attr("transform", function(d) { console.log(d.Year ,"this is year") ;return "translate(" + x0(d.Year) + ",0)"; });
       //s.attr("id","hello");
@@ -212,8 +260,48 @@ d3.json("codepython_output.json", function(error, data) {
         .attr("height", function(d) { return height - y(d.value); });
         
 
-      rectangle.append("title")
-            .text(function(d,i) {return d.name + " = "+d.value;});
+
+        svg.selectAll("rect").on("mousemove", function(d) {
+
+        //console.log(d3.select(this).attr("x"));
+
+        //Get this bar's x/y values, then augment for the tooltip
+       /* var xPosition = parseFloat(d3.select(this).attr("x")) + x0.rangeBand() + 60;
+        var yPosition = parseFloat(d3.select(this).attr("y")) + height - 150;
+*/
+        var xPosition = 300;
+        var yPosition = 400;
+
+        //Update the tooltip position and value
+        d3.select("#tooltip")
+          .style("left", xPosition + "px")
+          .style("top", yPosition + "px")
+          .select("#value")
+          .text(d.name + " = " + d.value);
+
+        //Show the tooltip
+        d3.select("#tooltip").classed("hidden", false);
+
+        });
+
+        svg.on("mouseout", function() {
+        //Hide the tooltip
+        d3.select("#tooltip").classed("hidden", true);
+        });
+
+
+     /* rectangle.append("title")
+            .text(function(d,i) {return d.name + " = "+ d.value;});*/
+
+  svg.selectAll("rect")
+          //.data(data)
+          //.filter(function(d){ return typeof(d) == "string"; })
+          .style("cursor", "pointer")
+          /*.on("click", function(d){
+              return console.log(d);*/
+              //document.location.href = "year&source=" + d.name;
+          ;
+
 
 
     d3.selectAll("text")
@@ -226,7 +314,7 @@ d3.json("codepython_output.json", function(error, data) {
 
 
   var legend = svg.selectAll(".legend")
-      .data(year.slice().reverse())
+      .data(sources.slice().reverse())
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });

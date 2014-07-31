@@ -85,6 +85,12 @@
 <h1>Source</h1>
 </div> -->
 
+
+<div id="tooltip" class="hidden">
+        <p><strong>Cases Published by</strong></p>
+        <p><span id="value"></span></p>
+</div>
+
 <div id="visualize">
 
 
@@ -121,6 +127,38 @@ body {
 .tansit{
   background-color: red;
 }
+
+#tooltip {
+        position: absolute;
+        width: 200px;
+        height: auto;
+        padding: 10px;
+        background-color: whitesmoke;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        /*-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);*/
+        
+        visibility: visible;
+        opacity: .7;
+        transition: opacity 1s linear;
+        pointer-events: none;
+    }
+
+    #tooltip.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 2s, opacity 2s linear;
+    }
+
+    #tooltip p {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 20px;
+    }
 
 </style>
 
@@ -221,8 +259,33 @@ d3.json(graph_year+"test.json", function(error, data) {
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); });
 
-    rectangle.append("title")
-        .text(function(d) {return d.name + "= "+d.value;});
+
+
+    svg.selectAll("rect").on("mousemove", function(d) {
+
+    //Get this bar's x/y values, then augment for the tooltip
+    var xPosition = 300;
+    var yPosition = 400;
+
+    //Update the tooltip position and value
+    d3.select("#tooltip")
+      .style("left", xPosition + "px")
+      .style("top", yPosition + "px")
+      .select("#value")
+      .text(d.name + " = " + d.value);
+
+    //Show the tooltip
+    d3.select("#tooltip").classed("hidden", false);
+
+    });
+
+    svg.on("mouseout", function() {
+    //Hide the tooltip
+    d3.select("#tooltip").classed("hidden", true);
+    });
+
+    /*rectangle.append("title")
+        .text(function(d) {return d.name + "= "+d.value;});*/
 
   d3.selectAll("text")
     //.data(data)
