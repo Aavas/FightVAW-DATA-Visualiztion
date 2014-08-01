@@ -3,7 +3,8 @@
 <html>
 <head>
   <title>Visualization</title>
-  <link rel = "stylesheet" href = "style_page.css" type = "text/css">
+  <link rel = "stylesheet" href = "./resources/style_page.css" type = "text/css">
+  <script src="./resources/d3.min.js"></script>
 </head>
 
 <body>
@@ -38,7 +39,7 @@
         </ul>
     </div>
     <div id = "logo_space">
-        <a href="http://fightvaw.org"><img src="logo.png"></a>
+        <a href="http://fightvaw.org"><img src="./resources/logo.png"></a>
     </div>
     
 </div>
@@ -53,8 +54,8 @@
         <li><a href="source_main.html" id ="main_page">Source of News</a></li>
         <li><a href="">District</a>
             <ul>
-                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
-                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
+                <li><a href="new-district.html?district=2013">2013</a></li>
+                <li><a href="new-district.html?district=2014">2014</a></li>
 
             </ul>
         </li>
@@ -72,7 +73,7 @@
 
 <div id="tooltip" class="hidden">
         <p><strong>Cases Published by</strong></p>
-        <p><span id="value">10</span></p>
+        <p><span id="value"></span></p>
 </div>
 
 <div id="visualize">
@@ -100,16 +101,8 @@ body {
 
 }
 
-.bar {
-  fill: steelblue;
-}
-
 .color-svg-component {
     background-color: whitesmoke;
-}
-
-.tansit{
-  background-color: red;
 }
 
 #tooltip {
@@ -148,11 +141,7 @@ body {
 
 </style>
 
-<script src="d3.min.js"></script>
-
 <script>
-
-
 
 var margin = {top: 20, right: 120, bottom: 30, left: 40},
     width = 900 - margin.left - margin.right,
@@ -184,14 +173,8 @@ var svg = d3.select("#visualize").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var tooltip = d3.select("body")
-                .append("div")
-                .style("position", "absolute")
-                .style("z-index", "10")
-                .style("visibility", "hidden")
-                .text("a simple tooltip");
 
-d3.json("codepython_output.json", function(error, data) {
+d3.json("./json_files/codepython_output.json", function(error, data) {
   var sources = d3.keys(data[0]).filter(function(key) { return key !== "Year";}); // list of all sources
   
 
@@ -261,14 +244,11 @@ d3.json("codepython_output.json", function(error, data) {
         
 
 
-        svg.selectAll("rect").on("mousemove", function(d) {
-
-        //console.log(d3.select(this).attr("x"));
+        svg.selectAll("rect").on("mouseover", function(d) {
 
         //Get this bar's x/y values, then augment for the tooltip
-       /* var xPosition = parseFloat(d3.select(this).attr("x")) + x0.rangeBand() + 60;
-        var yPosition = parseFloat(d3.select(this).attr("y")) + height - 150;
-*/
+        /* var xPosition = parseFloat(d3.select(this).attr("x")) + x0.rangeBand() + 60;
+        var yPosition = parseFloat(d3.select(this).attr("y")) + height - 150;*/
         var xPosition = 300;
         var yPosition = 400;
 
@@ -293,7 +273,7 @@ d3.json("codepython_output.json", function(error, data) {
      /* rectangle.append("title")
             .text(function(d,i) {return d.name + " = "+ d.value;});*/
 
-  svg.selectAll("rect")
+    svg.selectAll("rect")
           //.data(data)
           //.filter(function(d){ return typeof(d) == "string"; })
           .style("cursor", "pointer")

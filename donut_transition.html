@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <head>
   <title>TOV and District</title>
-  <link rel = "stylesheet" href = "style_page.css" type = "text/css">
+  <link rel = "stylesheet" href = "./resources/style_page.css" type = "text/css">
   <script type="text/javascript">
     function GetUrlValue(VarSearch){
     var SearchString = window.location.search.substring(1);
@@ -62,7 +62,7 @@
         </ul>
     </div>
     <div id = "logo_space">
-        <a href="http://fightvaw.org"><img src="logo.png"></a>
+        <a href="http://fightvaw.org"><img src="./resources/logo.png"></a>
     </div>
     
 </div>
@@ -77,8 +77,8 @@
         <li><a href="source_main.html" id ="main_page">Source of News</a></li>
         <li><a href="">District</a>
             <ul>
-                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
-                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
+                <li><a href="new-district.html?district=2013">2013</a></li>
+                <li><a href="new-district.html?district=2014">2014</a></li>
 
             </ul>
         </li>
@@ -118,7 +118,7 @@ form{
   <label><input type="radio" name="dataset" value="TOV_Cases"> TOV</label>
 </form>
 
-<script src="d3.min.js"></script>
+<script src="./resources/d3.min.js"></script>
 <script>
 
 
@@ -130,12 +130,15 @@ var width = 900,
     height = 500,
     radius = Math.min(width, height) / 2;
 
-var color = d3.scale.category20();
+var color = d3.scale.ordinal()
+            .range(["#1f77b4", "#aec7e8","#ff7f0e", "#ffbb78","#2ca02c", "#98df8a","#d62728","#ff9896","#9467bd", "#c5b0d5","#8c564b", "#c49c94",
+              "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5","#3182bd"," #6baed6", "#9ecae1", "#c6dbef",
+              "#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2", "#31a354", "#74c476", "#a1d99b", "#c7e9c0", "#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb",
+              "#636363", "#969696", "#bdbdbd", "#d9d9d9"]);
 
 var pie = d3.layout.pie()
-    .value(function(d) { console.log(d, "Data"); return d.District_Cases; })
-    //.name(function(d){return d.TOV})
-   .sort(null);
+    .value(function(d) { return d.District_Cases; });
+    //.sort(null);
 
 var arc = d3.svg.arc()
     .innerRadius(radius - 100)
@@ -148,18 +151,7 @@ var svg = d3.select("#visualize").append("svg")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 
-
-
-/*var start_val = 0,
-    duration = 200,
-    end_val = [14];
-
-*/
-
-
-//svg.append("text").attr('x', -40).attr('y', -10).attr('class',"total" ).text("Total:");
-
-d3.json(donut_month + ".json", function(error, data) {
+d3.json("./json_files/" + donut_month + ".json", function(error, data) {
   console.log(data);
   var path = svg.datum(data).selectAll("path")
     .data(pie)
@@ -173,38 +165,17 @@ d3.json(donut_month + ".json", function(error, data) {
 
 
 svg.append("text")
-          .style("text-anchor", "middle")
-         // .attr("y",-40)
-                  .attr("class" , "this")
-                  .style("font-size","20px")
-                  .style("font-family","sans-serif")
-                  .style("fill", "steelblue")
-                  //.attr("class", "on")
-                  .text("Cases in " + month_text + " of "+ year_text);
-// var i=d3.interpo
-/*svg.selectAll(".txt")
-    .data(end_val)
-    .enter()
-    .append("text")
-    .text(start_val)
-    .attr("class", "txt")
-    .attr("x", -20)
-    .attr("y", 30)
-    .transition()
-    .duration(1000)
-        .tween("text", function(d) {
-            var i = d3.interpolate(0, d),
-                prec = (d + "").split("."),
-                round = (prec.length > 1) ? Math.pow(10, prec[1].length) : 1;
+    .style("text-anchor", "middle")
+    // .attr("y",-40)
+    .attr("class" , "this")
+    .style("font-size","20px")
+    .style("font-family","sans-serif")
+    .style("fill", "steelblue")
+    //.attr("class", "on")
+    .text("Cases in " + month_text + " of "+ year_text);
 
-            return function(t) {
-                this.textContent = Math.round(i(t) * round) / round;
-            };
-        });
-*/
-
-  d3.selectAll("input")
-      .on("change", change);
+d3.selectAll("input")
+  .on("change", change);
 
 
 
@@ -214,9 +185,6 @@ svg.append("text")
 
   function change() {
     var value = this.value;
-    var name = this.name; /// Value of name not passing
-    console.log("this value"+this.value);
-    console.log("this name" + this.name);
     clearTimeout(timeout);
     pie.value(function(d) { /*console.log("hello" + d[name]);*/ return d[value]; }); // change the value function
     path = path.data(pie); // compute the new angles
@@ -230,13 +198,13 @@ svg.append("text")
         //svg.select(".this").exit().remove();
           d3.selectAll(".this").text("Cases in " + month_text + " of "+ year_text);
 
-          return d.data.District + "=" + d.value;}});
+          return d.data.District + " = " + d.value;}});
     
     d3.selectAll("path").attr("class",'label').
     on("mouseenter", function(d,i) {
                   text = path.append("text")
                   .attr("transform", arc.centroid(d))
-                  .attr("dy", ".5em")
+                  .attr("y", 200)
                   .style("text-anchor", "middle")
                   .style("font-size","20px")
                   .style("fill", "darkgrey")
@@ -245,6 +213,9 @@ svg.append("text")
                   /*.on("mouseout", function(d) {
                            text.remove();})*/
     .append("svg:title").text(function(d,i){console.log(d);return d.data.District + "=" + d.value;});
+
+   
+
   }
 });
 

@@ -2,8 +2,8 @@
 <meta charset="utf-8">
 <head>
 	<title>Donut Visualization</title>
-	<link rel = "stylesheet" href = "style_page.css" type = "text/css">
-	<script type="text/javascript" src="d3.min.js"></script>
+	<link rel= "stylesheet" href = "./resources/style_page.css" type = "text/css">
+	<script type="text/javascript" src="./resources/d3.min.js"></script>
 	<script type="text/javascript">
 	  function GetUrlValue(VarSearch){
 	  var SearchString = window.location.search.substring(1);
@@ -23,12 +23,51 @@
 	  	var district_name = window.location.search.substring(14);
 	  	return district_name
 	  }
-</script>
+	</script>
 
 </head>
 
 
 <body>
+
+
+<style>
+
+	#tooltip {
+        position: absolute;
+        width: 200px;
+        height: 58px;
+        padding: 10px;
+        text-align: center;
+        background-color: whitesmoke;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        /*-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);*/
+        
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 1s linear;
+        pointer-events: none;
+    }
+
+    #tooltip.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 2s, opacity 2s linear;
+            
+    }
+
+    #tooltip p {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 20px;
+    }
+
+</style>
 
 <div id="header">
     <div id="nav">
@@ -60,7 +99,7 @@
         </ul>
     </div>
     <div id = "logo_space">
-        <a href="http://fightvaw.org"><img src="logo.png"></a>
+        <a href="http://fightvaw.org"><img src="./resources/logo.png"></a>
     </div>
     
 </div>
@@ -75,8 +114,8 @@
         <li><a href="source_main.html" id ="main_page">Source of News</a></li>
         <li><a href="">District</a>
             <ul>
-                <li><a href="new-district.html?district=2013" onclick = "">2013</a></li>
-                <li><a href="new-district.html?district=2014" onclick = "">2014</a></li>
+                <li><a href="new-district.html?district=2013">2013</a></li>
+                <li><a href="new-district.html?district=2014">2014</a></li>
 
             </ul>
         </li>
@@ -91,6 +130,11 @@
 <h1>Source</h1>
 </div> -->
 
+<div id="tooltip" class="hidden">
+        <p><strong>Cases of</strong></p>
+        <p><span id="value"></span></p>
+</div>
+
 <div id="visualize">
 
 
@@ -104,7 +148,7 @@
 	district_name = GetDistrictOnly();
 
 
-	d3.json(file + ".json", function(data){
+	d3.json("./json_files/" + file + ".json", function(data){
 
 	var canvas = d3.select("#visualize").append("svg").attr("width", "100%").attr("height","100%");
 		
@@ -118,8 +162,8 @@
 					.outerRadius(r);
 
 		var pie = d3.layout.pie()
-					/*.startAngle(1.1*Math.PI)
-    				.endAngle(3.1*Math.PI)*/
+					.startAngle(1.1*Math.PI)
+    				.endAngle(3.1*Math.PI)
 					.value(function (d){console.log(d); return d.TOV_Cases;})
 					.sort(null);
 
@@ -132,9 +176,8 @@
 		/*arcs.append("text")
 			  //.attr("dy", "0")
 			  .style("text-anchor", "middle")
-			  .text(function(d) { return "TOV"; });
-*/
-		arcs.append("path")
+			  .text(function(d) { return "TOV"; });*/
+			arcs.append("path")
 						.attr("fill", function(d,i){return color(i);})
 						.transition()
 						.delay(function(d,i){return i*60;})
@@ -148,31 +191,26 @@
 						  });
 					//	.attr("d", arc);
 			
-			
+			//Display the name of the donut chart in the center of the donut//
 			group.append("text")
+			.attr("y",-200)
 				  .style("text-anchor", "middle")
                   .style("font-size","20px")
                   .style("font-family","sans-serif")
                   .style("fill", "steelblue")
                   //.attr("class", "on")
-                  .text("Type of Violence");
+                  .text("Type of Violence on " + district_name);
 
-            group.append("text")
-            	  .attr("dy","2em")
-                  .style("text-anchor", "middle")
-                  .style("font-size","20px")
-                  .style("font-family","sans-serif")
-                  .style("fill", "steelblue")
-                  //.attr("class", "on")
-                  .text("on "+ district_name);
-
+            //////////////////////////////////////////////////////////////////
+/*
 			arcs.on("mouseenter", function(d,i) {
                   text = arcs.append("text")
                   .attr("transform", arc.centroid(d))
                   .attr("y",200)
                   .style("text-anchor", "middle")
                   .style("font-size","20px")
-                  .style("fill", "darkgrey")
+                  .style("font-family","sans-serif")
+                  .style("fill", "grey")
                   .attr("class", "on")
                   .text(d.data.TOV+":"+d.data.TOV_Cases);
 		      })
@@ -181,6 +219,30 @@
 		      })
 		      .append("title")
 					.text(function(d) {return d.data.TOV + ":" + d.data.TOV_Cases;});
+*/
+
+			arcs.on("mouseover", function(d) {
+
+			//Get this bar's x/y values, then augment for the tooltip
+		    var xPosition = 550;
+		    var yPosition = 560;
+
+		    //Update the tooltip position and value
+		    d3.select("#tooltip")
+		      .style("left", xPosition + "px")
+		      .style("top", yPosition + "px")
+		      .select("#value")
+		      .text(d.data.TOV + " = " + d.data.TOV_Cases);
+
+		    //Show the tooltip
+		    d3.select("#tooltip").classed("hidden", false);
+
+		    });
+
+		    canvas.on("mouseout", function() {
+		    //Hide the tooltip
+		    d3.select("#tooltip").classed("hidden", true);
+		    });
 
 		
 
@@ -190,14 +252,7 @@
 */
 	});
 
-		/**arcs.transition()
-			.duration(1000)
-			.delay(300)
-			.attr('r',10)
-			.each("start",function() { d3.select{this}; });
-			**/
-
-			</script>
+	</script>
 
 </body>
 
