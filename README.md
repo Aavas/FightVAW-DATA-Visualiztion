@@ -1,7 +1,7 @@
 FightVAW-DATA-Visualization
 ==========================
 
-#This is a visualization of FightVAW.org website.
+##This is a visualization of FightVAW.org website.
 
 Run first from python_scripts folder the following files:
 
