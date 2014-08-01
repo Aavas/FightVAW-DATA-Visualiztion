@@ -166,7 +166,7 @@ d3.json("./json_files/" + donut_month + ".json", function(error, data) {
 
 svg.append("text")
     .style("text-anchor", "middle")
-    .attr("y",-250)
+    // .attr("y",-40)
     .attr("class" , "this")
     .style("font-size","20px")
     .style("font-family","sans-serif")
@@ -177,13 +177,11 @@ svg.append("text")
 d3.selectAll("input")
   .on("change", change);
 
-
-
-  var timeout = setTimeout(function() {
+var timeout = setTimeout(function() {
     d3.select("input[value=\"District_Cases\"]").property("checked", true).each(change);
   }, 200);
 
-  function change() {
+function change() {
     var value = this.value;
     clearTimeout(timeout);
     pie.value(function(d) { /*console.log("hello" + d[name]);*/ return d[value]; }); // change the value function
@@ -203,19 +201,10 @@ d3.selectAll("input")
     d3.selectAll("path").attr("class",'label').
     on("mouseenter", function(d,i) {
                   text = path.append("text")
-                  .attr("transform", arc.centroid(d))
-                  .attr("y", 200)
-                  .style("text-anchor", "middle")
-                  .style("font-size","20px")
-                  .style("fill", "darkgrey")
-                  .attr("class", "on")
+                  //.attr("transform", arc.centroid(d))
+                  //.attr("y", 200)
                   .text(d.data.District);})
-                  /*.on("mouseout", function(d) {
-                           text.remove();})*/
-    .append("svg:title").text(function(d,i){console.log(d);return d.data.District + "=" + d.value;});
-
-   
-
+                  .append("svg:title").text(function(d,i){console.log(d);return d.data.District + "=" + d.value;});
   }
 });
 
