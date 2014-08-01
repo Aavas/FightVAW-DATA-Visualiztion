@@ -15,4 +15,4 @@ FightVAW-DATA-Visualiztion
 
 Run these files in that order. These scripts create their respective .json files in the "json_files" folder. The html files uses these .json files to visualize the data.
 
-#Open "source_main.html" to begin browsing.
+Open "source_main.html" to begin browsing.
