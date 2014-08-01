@@ -126,7 +126,7 @@ var donut_month = GetUrlValue("month");
 var year_text = GetYearValue();
 var month_text = GetMonthValue();
 
-var width = 900,
+var width = 1000,
     height = 500,
     radius = Math.min(width, height) / 2;
 
@@ -166,7 +166,7 @@ d3.json("./json_files/" + donut_month + ".json", function(error, data) {
 
 svg.append("text")
     .style("text-anchor", "middle")
-    // .attr("y",-40)
+    .attr("y",-250)
     .attr("class" , "this")
     .style("font-size","20px")
     .style("font-family","sans-serif")
