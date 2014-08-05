@@ -85,10 +85,6 @@
 <!-- <div id="nav_visualization">
 <h1>Source</h1>
 </div> -->
-<script type="text/javascript">
-var news_source = GetUrlValue("source");
-</script>
-
 <div id="tooltip" class="hidden">
         <p><strong>Cases Published by</strong></p>
         <p><span id="value"></span></p>
@@ -182,8 +178,8 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 var line = d3.svg.line()
-    .x(function(d) { console.log(x(d.Day)+" xposition");return x(d.Day); })
-    .y(function(d) { console.log(y(d.Cases)+" yposition");return y(d.Cases); });
+    .x(function(d) { return x(d.Day); })
+    .y(function(d) { return y(d.Cases); });
 
 var svg = d3.select("#visualize").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -199,7 +195,7 @@ d3.csv("./json_files/" + news_source + ".csv", function(error, data) {
 
   x.domain(d3.extent(data, function(d) { return d.Day; }));
   //y.domain(d3.extent(data,function(d) { return d.Cases; }));
-  y.domain([0,d3.max(data,function(d) { return d.Cases; })]);
+  y.domain([0,d3.max(data,function(d) { return d.Cases; })+ .05]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -263,7 +259,55 @@ d3.csv("./json_files/" + news_source + ".csv", function(error, data) {
       });
     ;
 
-  
+    d3.selectAll("circle")
+      .on("mouseenter",function(d,i)
+        {
+          var xPosition=d3.select(this).attr('cx');
+          var yPosition=d3.select(this).attr('cy');
+          console.log(xPosition+ " , " + yPosition + " x and y");
+
+          var linearray =[{'x':0,'y':yPosition},{'x':xPosition-4,'y':yPosition}];
+
+          var line = d3.svg.line()
+                    .x(function(d) {return d.x; })
+                    .y(function(d) { return d.y; });
+
+
+                    svg.append("svg")
+                      .selectAll("path")
+                      .data(linearray).enter()
+                      .append("path")
+                      .attr("class","line_join")
+
+                      .attr("d", function() { return line(linearray) ;})
+                      .style('stroke-opacity', 0)
+                      
+                      .style('stroke-opacity', .2)
+                      .style('stroke-width', 2)
+                      .style("stroke", "#EF3F55")
+                      .attr('fill', 'none');
+
+          var linearray =[{'x':xPosition,'y':+yPosition+4},{'x':xPosition,'y':height}];
+                      svg.append("svg")
+                      .selectAll("path")
+                      .data(linearray).enter()
+                      .append("path")
+                      .attr("class","line_join")
+
+                      .attr("d", function() { return line(linearray) ;})
+                      .style('stroke-opacity', 0)
+                      
+                      .style('stroke-opacity', .2)
+                      .style('stroke-width', 2)
+                      .style("stroke", "#EF3F55")
+                      .attr('fill', 'none');
+
+
+
+        })
+        .on("mouseout",function(d,i){
+          svg.selectAll(".line_join").remove();
+           });
   //Create a line joining all the data
   /*svg.append("path")
       .datum(data)
