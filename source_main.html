@@ -277,9 +277,8 @@ d3.json("./json_files/codepython_output.json", function(error, data) {
           //.data(data)
           //.filter(function(d){ return typeof(d) == "string"; })
           .style("cursor", "pointer")
-          /*.on("click", function(d){
-              return console.log(d);*/
-              //document.location.href = "year&source=" + d.name;
+          .on("click", function(d){
+              document.location.href = "scatterplot.html?source=" + d.name;})
           ;
 
 

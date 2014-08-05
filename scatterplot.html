@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+  <title>Visualization</title>
+  <link rel = "stylesheet" href = "./resources/style_page.css" type = "text/css">
+  <script src="./resources/d3.min.js"></script>
+  <script type="text/javascript">
+    function GetUrlValue(VarSearch){
+    var SearchString = window.location.search.substring(1);
+    console.log(SearchString);
+    var VariableArray = SearchString.split('&');
+    console.log(VariableArray);
+    for(var i = 0; i < VariableArray.length; i++){
+      var KeyValuePair = VariableArray[i].split('=');
+      if(KeyValuePair[0] == VarSearch){
+        console.log(KeyValuePair[1]);
+        return KeyValuePair[1];
+        }
+      }
+    }
+  </script>
+
+</head>
+
+<body>
+
+<div id="header">
+    <div id="nav">
+        <ul>
+            <li>
+                <a href="http://fightvaw.org">HOME</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/about">ABOUT</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/organizations">ORGANIZTIONS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/news">NEWS</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/katha">MERO KATHA</a>
+            </li>
+            <li>
+                <a href="source_main.html">VISUALIZATION</a>
+            </li>
+            <li>
+                <a href="http://blog.fightvaw.org">BLOG</a>
+            </li>
+            <li>
+                <a href="http://fightvaw.org/contact">CONTACT</a>
+            </li>
+        </ul>
+    </div>
+    <div id = "logo_space">
+        <a href="http://fightvaw.org"><img src="./resources/logo.png"></a>
+    </div>
+    
+</div>
+<div id="wrapper">
+    <h1>Data Visualization</h1>
+    <p>Visualization of data of FightVAW.org</p>
+</div>
+
+
+<div id = "nav_visualization">
+    <ul>
+        <li><a href="source_main.html" id ="main_page">Source of News</a></li>
+        <li><a href="">District</a>
+            <ul>
+                <li><a href="new-district.html?district=2013">2013</a></li>
+                <li><a href="new-district.html?district=2014">2014</a></li>
+
+            </ul>
+        </li>
+        
+       
+    </ul>   
+</div>
+
+
+
+<!-- <div id="nav_visualization">
+<h1>Source</h1>
+</div> -->
+<script type="text/javascript">
+var news_source = GetUrlValue("source");
+</script>
+
+<div id="tooltip" class="hidden">
+        <p><strong>Cases Published by</strong></p>
+        <p><span id="value"></span></p>
+</div>
+
+<div id="visualize">
+
+
+
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+
+
+}
+
+#tooltip {
+        position: absolute;
+        width: 250px;
+        height: auto;
+        padding: 10px;
+        background-color: whitesmoke;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        
+        visibility: visible;
+        opacity: .7;
+        transition: opacity .3s linear;
+        pointer-events: none;
+    }
+
+    #tooltip.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s .3s, opacity .3s linear;
+    }
+
+    #tooltip p {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 20px;
+    }
+
+</style>
+<body>
+<script>
+
+var news_source = GetUrlValue("source");
+
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+         .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var line = d3.svg.line()
+    .x(function(d) { console.log(x(d.Day)+" xposition");return x(d.Day); })
+    .y(function(d) { console.log(y(d.Cases)+" yposition");return y(d.Cases); });
+
+var svg = d3.select("#visualize").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("./json_files/" + news_source + ".csv", function(error, data) {
+  data.forEach(function(d) {
+    d.Day = parseDate(d.Day);
+    d.Cases = +d.Cases;
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.Day; }));
+  //y.domain(d3.extent(data,function(d) { return d.Cases; }));
+  y.domain([0,d3.max(data,function(d) { return d.Cases; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Cases");
+
+  ///Create a circle in the x and y postion of the data and define radius based on the number of cases
+  svg.selectAll("dot").data(data).enter().append("circle")
+     .attr("cx",function(d){return x(d.Day);})
+     .attr("cy",function(d){return y(d.Cases);})
+     .attr("r",function(d){return d.Cases * 2.5})
+     .attr("class","dot")  
+     .style("fill-opacity",1)   
+     .style("fill","steelblue")
+     .on("mouseover",function(d) {
+
+      d3.selectAll("circle")
+        .style("fill-opacity",.3);
+
+      d3.select(this)
+        .style("fill-opacity",1)
+        .style("fill", "#EF3F55")
+
+      console.log(d3.select(this).attr("x"));
+      //Get this bar's x/y values, then augment for the tooltip
+      var xPosition = d3.select(this).attr("cx");
+      var yPosition = d3.select(this).attr("cy");
+      var day_split = [];
+
+      //Update the tooltip position and value
+      d3.select("#tooltip")
+        .style("left", +xPosition + 220 + "px")
+        .style("top", +yPosition + 380 + "px")
+        .select("#value")
+        .html(function(){
+          tooltip_date = d.Day.toString().split(" ");
+          return "<p><strong>" +news_source + " on </strong></p>"+ tooltip_date[0] + ", " + tooltip_date[2]+ " "  + tooltip_date[1]+ " "  +tooltip_date[3] + " = " + d.Cases;
+        });
+
+      //Show the tooltip
+      d3.select("#tooltip").classed("hidden", false);
+
+      });
+
+      svg.on("mouseout", function() {
+      //Hide the tooltip
+      d3.selectAll("circle")
+        .style("fill-opacity",1)
+        .style("fill","steelblue")
+      d3.select("#tooltip").classed("hidden", true);
+      });
+    ;
+
+  
+  //Create a line joining all the data
+  /*svg.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d",line);*/
+});
+
+</script>
