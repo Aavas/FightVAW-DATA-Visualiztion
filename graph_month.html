@@ -289,6 +289,15 @@ d3.json("./json_files/"+graph_year+"test.json", function(error, data) {
     /*rectangle.append("title")
         .text(function(d) {return d.name + "= "+d.value;});*/
 
+
+  svg.selectAll("rect")
+          //.data(data)
+          //.filter(function(d){ return typeof(d) == "string"; })
+          .style("cursor", "pointer")
+          .on("click", function(d){
+              document.location.href = "scatterplot.html?source=" + d.name;})
+          ;
+
   d3.selectAll("text")
     //.data(data)
     .filter(function(d){ return typeof(d) == "string"; })
