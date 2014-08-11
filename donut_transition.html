@@ -87,6 +87,15 @@
     </ul>   
 </div>
 
+<div id="tooltip1" class="hidden">
+        <p><strong>Cases encountered:</strong></p>
+        <p><span id="value"></span></p>
+</div>
+<!-- <div id="tooltip2" class="hidden">
+        <p><strong>Cases Published of</strong></p>
+        <p><span id="value"></span></p>
+</div> -->
+
 <div id="visualize">
 
 <style>
@@ -105,9 +114,42 @@ text {
     text-align: center;
 
 }
+
 form{
   float: right;
 }
+
+#tooltip1{
+        position: absolute;
+        width: 250px;
+        height: auto;
+        padding: 10px;
+        background-color: whitesmoke;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        
+        visibility: visible;
+        opacity: .7;
+        transition: opacity .3s linear;
+        pointer-events: none;
+    }
+
+    #tooltip1.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s .3s, opacity .3s linear;
+    }
+
+    #tooltip1 p {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 20px;
+    }
 
 
 </style>
@@ -137,7 +179,7 @@ var color = d3.scale.ordinal()
               "#636363", "#969696", "#bdbdbd", "#d9d9d9"]);
 
 var pie = d3.layout.pie()
-    .value(function(d) { return d.District_Cases; });
+    .value(function(d) { return d.District_Cases;});
     //.sort(null);
 
 var arc = d3.svg.arc()
@@ -184,27 +226,44 @@ var timeout = setTimeout(function() {
 function change() {
     var value = this.value;
     clearTimeout(timeout);
-    pie.value(function(d) { /*console.log("hello" + d[name]);*/ return d[value]; }); // change the value function
+    pie.value(function(d) { return d[value]; }); // change the value function
     path = path.data(pie); // compute the new angles
     path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
-    path.select("title").text(function(d,i){ 
-      if (value=="TOV_Cases") {
-        //svg.select(".this").exit().remove();
-            d3.selectAll(".this").text("Voilence in " + month_text + " of "+ year_text);
-           return d.data.TOV + "=" + d.value;}
-      else{ 
-        //svg.select(".this").exit().remove();
-          d3.selectAll(".this").text("Cases in " + month_text + " of "+ year_text);
-
-          return d.data.District + " = " + d.value;}});
     
-    d3.selectAll("path").attr("class",'label').
-    on("mouseenter", function(d,i) {
-                  text = path.append("text")
-                  //.attr("transform", arc.centroid(d))
-                  //.attr("y", 200)
-                  .text(d.data.District);})
-                  .append("svg:title").text(function(d,i){console.log(d);return d.data.District + "=" + d.value;});
+    if (value=="TOV_Cases") {
+        d3.selectAll(".this").text("Voilence in " + month_text + " of "+ year_text);
+    }
+    else{
+        d3.selectAll(".this").text("Cases in " + month_text + " of "+ year_text);
+    }
+
+    d3.selectAll("path").attr("class",'label')
+    .on("mouseenter", function(d) {
+        
+        var xPosition = 150;
+        var yPosition = 400;
+
+        d3.select("#tooltip1")
+          .style("left", xPosition + "px")
+          .style("top", yPosition + "px")
+          .select("#value")        
+          .text(function (){
+            if (value=="TOV_Cases") {return d.data.TOV + " = " + d.value;}
+            else return d.data.District + " = " + d.value;
+          })
+          //Show the tooltip
+          d3.select("#tooltip1").classed("hidden", false);
+        })
+
+    /////////////////////////////////////////////////////////////
+        
+    .on("mouseout", function() {
+        //Hide the tooltip
+        d3.select("#tooltip1").classed("hidden", true);
+        });
+    /*.append("svg:title").text(function(d){return d.data.District + "=" + d.value;});*/
+        /////////////////////////////////////////////////////////////
+
   }
 });
 

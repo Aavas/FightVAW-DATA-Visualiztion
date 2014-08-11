@@ -182,9 +182,9 @@ body {
 
 var graph_year = GetUrlValue("year");
 
-var margin = {top: 20, right: 130, bottom: 30, left: 40},
+var margin = {top: 20, right: 130, bottom: 80, left: 40},
     width = 1000 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 550 - margin.top - margin.bottom;
 
 var x0 = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -323,6 +323,12 @@ d3.json("./json_files/"+graph_year+"test.json", function(error, data) {
       .attr("dy", ".35em")
       .style("text-anchor", "left")
       .text(function(d) { return d; });
+
+  svg.append("text").attr("x",400)
+      .attr("y",500)
+      .attr("font-size","15px")
+      .style("text-anchor", "middle")
+      .text("Figure: Number of Cases published by different sources in months of " + graph_year);
 
 });
 

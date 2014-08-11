@@ -143,9 +143,9 @@ body {
 
 <script>
 
-var margin = {top: 20, right: 120, bottom: 30, left: 40},
+var margin = {top: 20, right: 120, bottom:80, left: 40},
     width = 900 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 550 - margin.top - margin.bottom;
 
 var x0 = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -190,13 +190,13 @@ d3.json("./json_files/codepython_output.json", function(error, data) {
       //.attr("id","hello")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + (height + 3) + ")")
-      .call(xAxis)
-      .append("text")
+      .call(xAxis);
+      /*.append("text")
       .attr("y",25)
       //.attr("dy", ".90em")
       .attr("x",(width/2))
       .style("text-anchor", "end")
-      .text("Year");
+      .text("Year");*/
 
  
 
@@ -319,6 +319,12 @@ d3.json("./json_files/codepython_output.json", function(error, data) {
       .style("text-anchor", "left")
       .attr("width", 18)
       .text(function(d) { return d; });
+
+  svg.append("text").attr("x",370)
+      .attr("y",500)
+      .attr("font-size","15px")
+      .style("text-anchor", "middle")
+      .text("Figure: Number of Cases published by different sources in years");
 
 });
 

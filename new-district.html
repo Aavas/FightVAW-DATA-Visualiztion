@@ -144,9 +144,9 @@
 
 		file = GetUrlValue("district");
 
-			var margin = {top:50, right: 50, bottom:100, left:100};
+			var margin = {top:50, right: 50, bottom:130, left:100};
 			var w = 800-margin.left - margin.right;
-			var h = 600-margin.top - margin.bottom;
+			var h = 650-margin.top - margin.bottom;
 
 			var canvas = d3.select("#visualize").append("svg")
 							.attr("width", w + margin.left + margin.right)
@@ -188,7 +188,7 @@
 				.attr("height",0)
 				.transition()
 		    	.delay(function(d,i){return i *100;})
-		      	.duration(600)
+		      	.duration(1000)
 				.attr("y", function (d){return yScale(d.Cases); })
 				.attr("width", xScale.rangeBand())					
 				.attr("height",function (d) {console.log(d.Cases+"height"); return h-yScale(d.Cases); });
@@ -236,7 +236,7 @@
 					.attr("height",0)
 					.transition()
 			    	.delay(function(d,i){return i *100;})
-			      	.duration(600)
+			      	.duration(1000)
 					.attr("class","text")
 					.text(function(d) {	return d.Cases;  })
 					   .attr("text-anchor", "middle")
@@ -252,7 +252,7 @@
 				.attr("class","x axis")
 				.attr("transform","translate(0,"+ h + ")")
 				.transition()
-		    	.duration(1000)
+		    	.duration(2000)
 				.call(xAxis)
 				.selectAll("text")
 				.attr("dy",".15em")
@@ -271,6 +271,13 @@
 				.attr("x", -(h/2))
 				.style("text-anchor","end")
 				.text("Cases");
+
+			canvas.append("text")
+				.attr("x",350)
+			    .attr("y",580)
+			    .attr("font-size","15px")
+			    .style("text-anchor", "middle")
+			    .text("Figure: Number of Cases encountered in different districts in " + file);
 
 
 			

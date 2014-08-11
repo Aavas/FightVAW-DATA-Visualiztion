@@ -150,7 +150,7 @@
 
 	d3.json("./json_files/" + file + ".json", function(data){
 
-	var canvas = d3.select("#visualize").append("svg").attr("width", "100%").attr("height","100%");
+	var canvas = d3.select("#visualize").append("svg").attr("width", "1000").attr("height","500");
 		
 
 		var group = canvas.append("g") 
@@ -162,8 +162,8 @@
 					.outerRadius(r);
 
 		var pie = d3.layout.pie()
-					.startAngle(1.1*Math.PI)
-    				.endAngle(3.1*Math.PI)
+					.startAngle(2*Math.PI)
+    				.endAngle(4*Math.PI)
 					.value(function (d){console.log(d); return d.TOV_Cases;})
 					.sort(null);
 

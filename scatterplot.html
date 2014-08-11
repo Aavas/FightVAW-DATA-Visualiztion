@@ -157,9 +157,9 @@ body {
 
 var news_source = GetUrlValue("source");
 
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
+var margin = {top: 20, right: 20, bottom: 80, left: 50},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 550 - margin.top - margin.bottom;
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
@@ -313,6 +313,12 @@ d3.csv("./json_files/" + news_source + ".csv", function(error, data) {
       .datum(data)
       .attr("class", "line")
       .attr("d",line);*/
+
+    svg.append("text").attr("x",450)
+      .attr("y",500)
+      .attr("font-size","15px")
+      .style("text-anchor", "middle")
+      .text("Figure: Scatter Plot of Cases published in a day by " + news_source);
 });
 
 </script>
